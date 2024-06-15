@@ -89,30 +89,11 @@ long long int baseConverter(char input[]){
   return sign * baseConverterWrapper(uNumber, 0);
 }
 
-void testBaseConverter(char input[17], long long expected){
-  long long result = baseConverter(input);
-  printf("Input: %s\nExpected: %lld\nResult: %lld\n\n", input, expected, result);
-}
-
-void decimalToBinary(long long n, char *binary, int size){
-  for(int i = size - 1; i >= 0; i--){
-    binary[i] = (n % 2) + '0';
-    n /= 2;
-  }
-  binary[size] = '\0';
-}
-
 int main(void){
-  puts("-----------Signed Binary to Decimal Test Cases-----------");
-  
-  // Loop over every 16-bit binary number
-  for(long long i = 0; i < 65536; i++){
-    char binary[17];
-    decimalToBinary(i, binary, 16);
-    long long expected = i < 32768 ? i : i - 65536; // Convert unsigned 16-bit to signed
-    printf("Testing %s...\n", binary);
-    testBaseConverter(binary, expected);
-  }
-  
+  char input[17];
+  puts("-----------Signed Binary to Decimal-----------");
+  printf("%s","Enter a binary number (max 16 bits):");
+  fgets(input, 17, stdin);
+  printf("Decimal: %lld", baseConverter(input));
   return 0;
 }
