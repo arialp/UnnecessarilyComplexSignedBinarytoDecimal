@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
 
 int ensureBinary(long long int number){
   // 0..0 is valid
@@ -10,7 +13,7 @@ int ensureBinary(long long int number){
   if(number < 0) return 0;
   
   int digit = number % 10;
-  return (digit != 0 && digit != 1) ? 0 : ensureBinary(number / 10);
+  return (digit == 0 || digit == 1) ? ensureBinary(number / 10) : 0;
 }
 
 // Quick way to add 1 to a binary
@@ -32,9 +35,7 @@ long long int binaryIncrementWrapper(long long int number, long long int buffer,
 }
 
 long long int binaryIncrement(long long int number){
-  long long int buffer = 0;
-  int position = 0;
-  return binaryIncrementWrapper(number, buffer, position);
+  return binaryIncrementWrapper(number, 0, 0);
 }
 
 long long int twosCompWrapper(long long int number, long long int buffer, int position){
@@ -50,50 +51,55 @@ long long int twosCompWrapper(long long int number, long long int buffer, int po
 }
 
 long long int twosComp(long long int number){
-  long long int buffer = 0;
-  int position = 0;
-  return twosCompWrapper(number, buffer, position);
+  return twosCompWrapper(number, 0, 0);
 }
 
 long long int baseConverterWrapper(long long int number, int position){
   if(number == 0) return 0;
   int digit = number % 10;
-  long long int result = digit * pow(2, position);
+  long long int result = digit * (1 << position);
   return result + baseConverterWrapper(number / 10, position + 1);
 }
 
 long long int baseConverter(char input[]){
-  long long int number, uNumber;
+  long long int number, tempNumber;
   int sign = 1;
-  int length;
   char *ptr;
+  
+  input[strcspn(input, "\n")] = '\0';
   
   // Check MSB as a string since int 0x..x is an octal not decimal
   if(input[0] == '1') sign = -1;
   
-  // loop to convert char array to long long
   number = strtoll(input, &ptr, 10);
   
+  // Checks whether strtoll was successful
+  if(input == ptr){
+    puts("Invalid input (no digits found)!");
+    return 0;
+  } else if(errno == ERANGE && number == LLONG_MIN){
+    puts("Invalid input (underflow)!");
+    return 0;
+  } else if(errno == ERANGE && number == LLONG_MAX){
+    puts("Invalid input (overflow)!");
+    return 0;
+  } else if(errno != 0 && number == 0){
+    puts("Invalid input (unspecified error)");
+    return 0;
+  }
   if(!ensureBinary(number)){
     puts("Not a valid binary!");
     return 0;
   }
-  if(sign == -1){
-    number = twosComp(number);
-  }
-  
-  // drop the sign
-  length = (number == 0) ? 1 : log10(number) + 1;
-  uNumber = number % (long long)pow(10, length);
-  
-  return sign * baseConverterWrapper(uNumber, 0);
+  tempNumber = (sign == -1) ? twosComp(number) : number;
+  return sign * baseConverterWrapper(tempNumber, 0);
 }
 
 int main(void){
-  char input[17];
+  char input[33];
   puts("-----------Signed Binary to Decimal-----------");
   printf("%s","Enter a binary number (max 16 bits):");
-  fgets(input, 17, stdin);
+  fgets(input, 33, stdin);
   printf("Decimal: %lld", baseConverter(input));
   return 0;
 }
