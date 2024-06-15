@@ -16,6 +16,9 @@ It converts a signed 16 bit (accuracy limit) binary **in a decimal form** to a d
 
 **`baseConverter()`** takes the input string and checks its sign bit, then converts the string to a long long using `strtoll()`, also checks if it was successful or not. Runs `ensureBinary()` to handle input errors. If sign bit is 1, calls `twosComp()`.
 
+## Usage:
+Run the main function, then enter a binary number **without any prefix** e.g. 01001101.
+
 ## A few hiccups:
 Finding the most significant bit proved to be difficult when working with just integers, it would truncate leading zeros, therefore the MSB would always be 1. That's why the main function first takes the input as a string, finds the MSB, then converts it to an integer.
 
