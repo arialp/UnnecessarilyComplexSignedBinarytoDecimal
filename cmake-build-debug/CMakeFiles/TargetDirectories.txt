@@ -1,0 +1,3 @@
+C:/Users/arial/CLionProjects/NumberBaseConverter/cmake-build-debug/CMakeFiles/NumberBaseConverter.dir
+C:/Users/arial/CLionProjects/NumberBaseConverter/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/arial/CLionProjects/NumberBaseConverter/cmake-build-debug/CMakeFiles/rebuild_cache.dir
